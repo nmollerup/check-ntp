@@ -6,7 +6,7 @@ require (
 	github.com/facebookincubator/ntp v0.0.0-20201209222934-81cb02c05f82
 	github.com/sensu/sensu-go/api/core/v2 v2.14.0
 	github.com/sensu/sensu-plugin-sdk v0.16.0
-	github.com/stretchr/testify v1.6.0
+	github.com/stretchr/testify v1.9.0
 )
 
 require (
@@ -50,5 +50,5 @@ require (
 	gopkg.in/ini.v1 v1.51.0 // indirect
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
