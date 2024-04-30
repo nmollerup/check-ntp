@@ -1,10 +1,11 @@
-[![Sensu Bonsai Asset](https://img.shields.io/badge/Bonsai-Download%20Me-brightgreen.svg?colorB=89C967&logo=sensu)](https://bonsai.sensu.io/assets/nixwiz/check-ntp)
-![Go Test](https://github.com/nixwiz/check-ntp/workflows/Go%20Test/badge.svg)
-![goreleaser](https://github.com/nixwiz/check-ntp/workflows/goreleaser/badge.svg)
+[![Sensu Bonsai Asset](https://img.shields.io/badge/Bonsai-Download%20Me-brightgreen.svg?colorB=89C967&logo=sensu)](https://bonsai.sensu.io/assets/nmollerup/check-ntp)
+![Go Test](https://github.com/nmollerup/check-ntp/workflows/Go%20Test/badge.svg)
+![goreleaser](https://github.com/nmollerup/check-ntp/workflows/goreleaser/badge.svg)
 
 # Sensu NTP offset check for Linux (ntpd or chrony)
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Usage examples](#usage-examples)
 - [Configuration](#configuration)
