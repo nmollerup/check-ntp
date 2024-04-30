@@ -25,8 +25,8 @@ var (
 		},
 	}
 
-	options = []*sensu.PluginConfigOption{
-		{
+	options = []sensu.ConfigOption{
+		&sensu.PluginConfigOption[float64]{
 			Path:      "critical",
 			Argument:  "critical",
 			Shorthand: "c",
@@ -34,7 +34,7 @@ var (
 			Usage:     "Critical threshold for offset in ms",
 			Value:     &plugin.Critical,
 		},
-		{
+		&sensu.PluginConfigOption[float64]{
 			Path:      "warning",
 			Argument:  "warning",
 			Shorthand: "w",
