@@ -50,7 +50,7 @@ using an asset, please consider doing so! If you're using sensuctl 5.13 with
 Sensu Backend 5.13 or later, you can use the following command to add the asset:
 
 ```
-sensuctl asset add nixwiz/check-ntp
+sensuctl asset add nmollerup/check-ntp
 ```
 
 If you're using an earlier version of sensuctl, you can find the asset on the [Bonsai Asset Index][3].
