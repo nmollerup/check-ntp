@@ -14,6 +14,7 @@ type Config struct {
 	sensu.PluginConfig
 	Warning  float64
 	Critical float64
+	Address  string
 }
 
 var (
@@ -42,6 +43,14 @@ var (
 			Usage:     "Warning threshold for offset in ms",
 			Value:     &plugin.Warning,
 		},
+		&sensu.PluginConfigOption[string]{
+			Path:      "address",
+			Argument:  "address",
+			Shorthand: "a",
+			Default:   "127.0.0.1:123",
+			Usage:     "Address to check NTP",
+			Value:     &plugin.Address,
+		},
 	}
 )
 
@@ -64,7 +73,7 @@ func checkArgs(event *corev2.Event) (int, error) {
 }
 
 func executeCheck(event *corev2.Event) (int, error) {
-	result, err := checker.RunCheck("")
+	result, err := checker.RunCheck(plugin.Address)
 	if err != nil {
 		fmt.Printf("%s CRITICAL: failed to run check, error: %v\n", plugin.PluginConfig.Name, err)
 		return sensu.CheckStateCritical, nil
