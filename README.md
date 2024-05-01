@@ -36,7 +36,6 @@ Available Commands:
 Flags:
   -c, --critical float   Critical threshold for offset in ms (default 100)
   -w, --warning float    Warning threshold for offset in ms (default 10)
-  -a, --address string   Address to check NTP (default 127.0.0.1:123)
   -h, --help             help for check-ntp
 
 Use "check-ntp [command] --help" for more information about a command.
@@ -76,7 +75,7 @@ spec:
   subscriptions:
   - system
   runtime_assets:
-  - nmollerup/check-ntp
+  - nixwiz/check-ntp
 ```
 
 ## Installation from source
@@ -98,6 +97,6 @@ For more information about contributing to this plugin, see [Contributing][4].
 
 [1]: https://docs.sensu.io/sensu-go/latest/reference/checks/
 [2]: https://docs.sensu.io/sensu-go/latest/reference/assets/
-[3]: https://bonsai.sensu.io/assets/nmollerup/check-ntp
+[3]: https://bonsai.sensu.io/assets/nixwiz/check-ntp
 [4]: https://github.com/sensu/sensu-go/blob/master/CONTRIBUTING.md
 [5]: https://docs.sensu.io/sensu-go/latest/observability-pipeline/observe-schedule/collect-metrics-with-checks/#supported-output-metric-formats
