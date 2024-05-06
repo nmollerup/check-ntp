@@ -75,7 +75,7 @@ spec:
   subscriptions:
   - system
   runtime_assets:
-  - nixwiz/check-ntp
+  - nmollerup/check-ntp
 ```
 
 ## Installation from source
