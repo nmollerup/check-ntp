@@ -1,6 +1,6 @@
 module github.com/nmollerup/check-ntp
 
-go 1.20
+go 1.22.2
 
 require (
 	github.com/facebookincubator/ntp v0.0.0-20201209222934-81cb02c05f82
