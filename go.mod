@@ -6,7 +6,7 @@ require (
 	github.com/facebookincubator/ntp v0.0.0-20201209222934-81cb02c05f82
 	github.com/sensu/sensu-go/api/core/v2 v2.14.0
 	github.com/sensu/sensu-plugin-sdk v0.16.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 )
 
 require (
