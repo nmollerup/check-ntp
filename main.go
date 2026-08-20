@@ -66,23 +66,23 @@ func checkArgs(event *corev2.Event) (int, error) {
 func executeCheck(event *corev2.Event) (int, error) {
 	result, err := checker.RunCheck("")
 	if err != nil {
-		fmt.Printf("%s CRITICAL: failed to run check, error: %v\n", plugin.PluginConfig.Name, err)
+		fmt.Printf("%s CRITICAL: failed to run check, error: %v\n", plugin.Name, err)
 		return sensu.CheckStateCritical, nil
 	}
 	stats, err := checker.NewNTPStats(result)
 	if err != nil {
-		fmt.Printf("%s CRITICAL: failed to extract NTP statistics, error: %v\n", plugin.PluginConfig.Name, err)
+		fmt.Printf("%s CRITICAL: failed to extract NTP statistics, error: %v\n", plugin.Name, err)
 		return sensu.CheckStateCritical, nil
 	}
 	perfData := fmt.Sprintf("clk_jitter=%f, clk_wander=%f, frequency=%f, mintc=%d, offset=%f, stratum=%d, sys_jitter=%f, tc=%d", stats.PeerJitter, result.SysVars.ClkWander, stats.Frequency, result.SysVars.MinTC, stats.PeerOffset, stats.PeerStratum, result.SysVars.SysJitter, result.SysVars.TC)
 
 	if math.Abs(stats.PeerOffset) > plugin.Critical {
-		fmt.Printf("%s CRITICAL: offset %.3f exceeds threshold  | %s\n", plugin.PluginConfig.Name, stats.PeerOffset, perfData)
+		fmt.Printf("%s CRITICAL: offset %.3f exceeds threshold  | %s\n", plugin.Name, stats.PeerOffset, perfData)
 		return sensu.CheckStateCritical, nil
 	} else if math.Abs(stats.PeerOffset) > plugin.Warning {
-		fmt.Printf("%s WARNING: offset %.3f exceeds threshold | %s\n", plugin.PluginConfig.Name, stats.PeerOffset, perfData)
+		fmt.Printf("%s WARNING: offset %.3f exceeds threshold | %s\n", plugin.Name, stats.PeerOffset, perfData)
 		return sensu.CheckStateWarning, nil
 	}
-	fmt.Printf("%s OK: offset %.3f within thresholds | %s\n", plugin.PluginConfig.Name, stats.PeerOffset, perfData)
+	fmt.Printf("%s OK: offset %.3f within thresholds | %s\n", plugin.Name, stats.PeerOffset, perfData)
 	return sensu.CheckStateOK, nil
 }
