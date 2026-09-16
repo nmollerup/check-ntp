@@ -8,6 +8,8 @@
 
 - [Overview](#overview)
 - [Usage examples](#usage-examples)
+- [Perfdata](#perfdata)
+- [Migrating from pre-1.0](#migrating-from-pre-10)
 - [Configuration](#configuration)
   - [Asset registration](#asset-registration)
   - [Check definition](#check-definition)
@@ -19,6 +21,14 @@
 The Sensu NTP Check is a [Sensu Check][1] that provides alerting on NTP offset
 and a set of NTP metrics. Metrics are provided in [nagios_perfdata][5] format.
 This check supports both ntpd and chrony NTP services running under Linux.
+
+Alerting is based on ntpd/chrony's **system offset** (the corrected clock
+offset applied to the local clock), not the offset to any individual peer.
+Peer offset can spike transiently (for example, when a VM is stunned by a
+vMotion/DRS migration or an ESXi host upgrade, which delays packet
+timestamps) without the system clock itself being wrong. The check also
+verifies that ntpd/chrony reports itself as synchronized (leap indicator, sys
+peer selection, and stratum) before evaluating the offset thresholds.
 
 ## Usage examples
 
@@ -34,12 +44,65 @@ Available Commands:
   version     Print the version number of this plugin
 
 Flags:
-  -c, --critical float   Critical threshold for offset in ms (default 100)
-  -w, --warning float    Warning threshold for offset in ms (default 10)
-  -h, --help             help for check-ntp
+  -c, --critical float                 Critical threshold for system offset in ms (default 100)
+  -w, --warning float                  Warning threshold for system offset in ms (default 10)
+      --root-distance-critical float   Critical threshold for root distance in ms (0 disables alerting, metric is still emitted)
+      --root-distance-warning float    Warning threshold for root distance in ms (0 disables alerting, metric is still emitted)
+      --legacy-perfdata                Additionally emit old perfdata field names (offset, clk_jitter, stratum) with their old (peer-based) meaning
+  -h, --help                           help for check-ntp
 
 Use "check-ntp [command] --help" for more information about a command.
 ```
+
+## Perfdata
+
+All metrics are reported in [nagios_perfdata][5] format:
+`check-ntp STATE: message | k=v, k=v, ...`.
+
+| Metric          | Value type | Unit | Description                                                        |
+|-----------------|------------|------|----------------------------------------------------------------------|
+| `sys_offset`    | System     | ms   | Corrected system clock offset. This drives the -w/-c alert.          |
+| `stratum`       | System     | -    | ntpd/chrony's own reported stratum.                                  |
+| `root_distance` | System     | ms   | `RootDelay/2 + RootDisp`; distance from the reference clock.         |
+| `sys_jitter`    | System     | ms   | System clock jitter.                                                 |
+| `clk_jitter`    | System     | ms   | Clock discipline jitter.                                             |
+| `clk_wander`    | System     | PPM  | Clock frequency wander.                                              |
+| `frequency`     | System     | PPM  | Clock frequency correction.                                          |
+| `tc`             | System     | -    | Clock discipline time constant.                                      |
+| `mintc`          | System     | -    | Minimum clock discipline time constant.                              |
+| `peer_offset`   | Peer       | ms   | Offset to the selected system peer (or an average of good peers).    |
+| `peer_jitter`   | Peer       | ms   | Jitter of the selected system peer.                                  |
+| `peer_stratum`  | Peer       | -    | Stratum reported by the selected system peer.                        |
+
+`--root-distance-warning`/`--root-distance-critical` are optional; when left
+at their default of `0`, `root_distance` is still reported as a metric but
+never triggers an alert.
+
+With `--legacy-perfdata`, three additional keys are appended using the
+**pre-migration names and meanings** (peer-based, not system-based):
+`offset` (= `peer_offset`), `clk_jitter` (= `peer_jitter`), `stratum` (=
+`peer_stratum`). Note that in this mode the perfdata line contains two
+`clk_jitter=` and two `stratum=` entries with different values — the first
+occurrence is always the new, system-based metric; the appended, legacy one
+is peer-based. Use `--legacy-perfdata` only as a temporary migration aid.
+
+## Migrating from pre-1.0
+
+Versions before 1.0 alerted on peer offset and named perfdata fields
+`offset`, `clk_jitter`, and `stratum` using **peer** values. As of 1.0:
+
+- Alerting is based on `sys_offset` (system offset), not peer offset.
+- `offset` has been renamed to `sys_offset` (system-based) and `peer_offset`
+  (peer-based) is a new, separate metric.
+- `clk_jitter` and `stratum` now report **system** values instead of peer
+  values; the old peer-based values are available under `peer_jitter` and
+  `peer_stratum`.
+
+If you have existing InfluxDB series or Grafana panels built on the old
+`offset`/`clk_jitter`/`stratum` measurements, either repoint them at the new
+field names, or run the check with `--legacy-perfdata` during the transition
+to keep emitting the old names with their old (peer-based) values alongside
+the new ones.
 
 ## Configuration
 
@@ -67,8 +130,8 @@ metadata:
 spec:
   command: >-
     check-ntp
-    --critical 20
-    --warning 10
+    --critical 250
+    --warning 150
   output_metric_format: nagios_perfdata
   output_metric_handlers:
     - influxdb
